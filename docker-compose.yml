@@ -24,6 +24,21 @@ services:
       - '/:/host:ro,rslave'
     mem_limit: 64m
     cpus: "0.25"
+  cadvisor:
+    image: ghcr.io/google/cadvisor:v0.60.6
+    container_name: cadvisor
+    restart: unless-stopped
+    privileged: true
+    devices:
+      - /dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /dev/disk:/dev/disk:ro
+    mem_limit: 128m
+    cpus: "0.25"
 
   prometheus:
     image: prom/prometheus:v3.5.0
