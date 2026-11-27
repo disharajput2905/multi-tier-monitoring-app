@@ -1,0 +1,34 @@
+
+name: Multi-Tier App CI
+
+on:
+  push:
+    branches:
+      - day1-stability
+  pull_request:
+    branches:
+      - day1-stability
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-validate:
+    name: Validate Compose and Build Images
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create temporary CI environment
+        run: |
+          printf 'DB_NAME=ci_test_db\n' > .env
+          printf 'DB_USER=ci_test_user\n' >> .env
+          printf 'DB_PASSWORD=ci_test_password\n' >> .env
+
+      - name: Validate Docker Compose configuration
+        run: docker compose config -q
+
+      - name: Build backend and frontend images
+        run: docker compose build backend frontend
