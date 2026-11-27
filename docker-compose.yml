@@ -1,6 +1,13 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
 
   grafana:
+    logging: *default-logging
     image: grafana/grafana:12.2.0
     container_name: grafana
     restart: unless-stopped
@@ -14,6 +21,7 @@ services:
     cpus: "0.50"
 
   node-exporter:
+    logging: *default-logging
     image: prom/node-exporter:v1.9.1
     container_name: node-exporter
     restart: unless-stopped
@@ -24,7 +32,9 @@ services:
       - '/:/host:ro,rslave'
     mem_limit: 64m
     cpus: "0.25"
+  
   cadvisor:
+    logging: *default-logging
     image: ghcr.io/google/cadvisor:v0.60.6
     container_name: cadvisor
     restart: unless-stopped
@@ -40,7 +50,8 @@ services:
     mem_limit: 128m
     cpus: "0.25"
 
-  prometheus:
+  prometheus: 
+    logging: *default-logging
     image: prom/prometheus:v3.5.0
     container_name: prometheus
     restart: unless-stopped
@@ -61,6 +72,7 @@ services:
 
 
   nginx:
+    logging: *default-logging
     image: nginx:alpine
 
     container_name: nginx-proxy
@@ -80,6 +92,7 @@ services:
         condition: service_started    
 
   db:
+    logging: *default-logging
     image: postgres:16
     container_name: postgres-db
     restart: unless-stopped   
@@ -99,6 +112,7 @@ services:
       retries: 5
 
   backend:
+    logging: *default-logging
     build: ./backend
     container_name: flask-backend
     restart: unless-stopped
@@ -117,6 +131,7 @@ services:
       retries: 3
 
   frontend:
+    logging: *default-logging
     build: ./frontend
     container_name: frontend
     restart: unless-stopped
